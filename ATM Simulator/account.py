@@ -32,6 +32,7 @@ class Account(ABC):
         if re.match(r"^\d+$", str(amount)):
             if amount <= self._balance:
                 self._balance -= amount
+                self.transactions.append(Transaction(self.account_number, amount, "Withdraw"))
                 print(f"Withdrawed {amount} from the account {self.account_number} successfully.")
             else:
                 print("Insufficient balance!")
@@ -73,9 +74,7 @@ class CurrentAccount(Account):
         """
         if re.match(r"^\d+$", str(amount)):
             if  amount <= (self._balance + self.OVERDRAFT_LIMIT):
-                self._balance -= amount
-                self.transactions.append(Transaction(self.account_number, amount, "Withdraw"))
-                print(f"Withdrawed {amount} from the account {self.account_number} successfully.")
+                super().withdraw(amount)
             else:
                 print("Insufficient balance!")
         else:

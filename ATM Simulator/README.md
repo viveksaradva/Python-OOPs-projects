@@ -29,20 +29,26 @@ banking_system/
 - Here the class `Account` is the base class and there are two subclasses: i) `SavingAccount` and ii) `CurrentAccount`.
 - All three classes follows some small amount of OOPs concepts:
     1. `Account` (base class):
-    - **Encapsulation** → Private balance attribute.
-    - **Abstract Class** → Cannot be instantiated directly.
+        - **Encapsulation** → Private balance attribute.
+        - **Abstract Class** → Cannot be instantiated directly.
     
     2. `SavingAccount` (subclass):
-    - **Inherits from** `Account`.
-    - **Polymorphism** → Implements `calculate_interest()`.
+        - **Inherits from** `Account`.
+        - **Polymorphism** → Implements `calculate_interest()`.
 
     3. `CurrentAccount` (subclass):
-    - Overrides `calculate_interest()` to have no interest.
-    - Implements overdraft protection.
+        - Overrides `calculate_interest()` to have no interest.
+        - Implements overdraft protection.
  
 ## Making of `customer.py`
+- This file manages the customer details.
+- It takes the fields `customer_id` and `name`.
+- Now one customer can have one or many(more than one) relations to `account`; one customer may have more than one accounts. These accounts will be stored in `self.accounts` list.
+- There are two methods that are used i) `add_account()` to add an account to a customer's account collection and ii) `get_accounts()` that will show the create accounts that the customer have. 
 
 ## Making of `transaction.py`
+- This file provides a proper schema for transaction details.
+- It has a `__str__()` dunder method that returns each transaction in a desired format.
 
 ## Making of `exception_handling.py`
 
