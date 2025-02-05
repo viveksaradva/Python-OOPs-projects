@@ -1,0 +1,20 @@
+{
+    "T1": {
+        "account_number": "A001",
+        "amount": 500,
+        "transaction_type": "Deposit",
+        "timestamp": "2025-02-05 12:34:15"
+    },
+    "T2": {
+        "account_number": "A001",
+        "amount": 500,
+        "transaction_type": "Deposit",
+        "timestamp": "2025-02-05 12:56:11"
+    },
+    "T3": {
+        "account_number": "A002",
+        "amount": 700,
+        "transaction_type": "Withdraw",
+        "timestamp": "2025-02-05 12:56:51"
+    }
+}

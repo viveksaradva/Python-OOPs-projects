@@ -53,5 +53,8 @@ banking_system/
 ## Making of `exception_handling.py`
 
 ## Making of `util.py`
-
-## Adding "File Handling" concept
+- I have add four functions:
+    1. `load_users()`: This function is used to load(read) the json file using the `json` module. Also contains `try except` block with checks for `JSONDecodeError`. It return a `dict` either filled or empty.
+    2. `save_users()`: This function is used to save the newly added user in the `users.json`.
+    3. `load_transactions()`: Similar functionality as `load_users()` but it loads or read transactions from the `transactions.json`.
+    4. `save_transactions()`: Similar functionality as `save_users()` but it saves newly added transaction to the `transactions.json`.

@@ -19,10 +19,12 @@ def load_users():
 
 def save_users(users):
     """
-    Save users to the JSON file
+    Save users to the JSON file atomically
     """
-    with open(USERS_FILE, 'w') as f:
+    temp_file = USERS_FILE + ".tmp"
+    with open(temp_file, 'w') as f:
         json.dump(users, f, indent=4)
+    os.replace(temp_file, USERS_FILE)  # Ensure data is fully written before replacing old file
 
 def load_transactions():
     """

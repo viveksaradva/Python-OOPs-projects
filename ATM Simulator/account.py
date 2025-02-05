@@ -1,4 +1,5 @@
 import re
+from datetime import datetime
 from utils import save_users, load_users, save_transactions, load_transactions
 from abc import ABC, abstractmethod
 from transaction import Transaction
@@ -13,7 +14,7 @@ class Account(ABC):
         self.user_accounts = load_users()
 
     def __str__(self):
-        return f"Account number: {self.account_number} | Owner: {self.owner}"
+        return f"Account number: {self.account_number} | Owner: {self.owner} | Balance: {self._balance}"
 
     @abstractmethod
     def calculate_interest(self):
@@ -26,9 +27,12 @@ class Account(ABC):
         if re.match(r"^\d+$", str(amount)):
             self._balance += amount
             self.add_transaction(Transaction(self.account_number, amount, "Deposit"))
-            self.user_accounts[self.owner]['balance'] = self._balance
-            save_users(self.bank.users)
-            print(f"Deposited {amount} in the account {self.account_number} successfully.")
+            self.user_accounts = load_users() # Reload to ensure we have fresh data
+            if self.owner in self.user_accounts and self.account_number in self.user_accounts[self.owner]['accounts']:
+                self.user_accounts[self.owner]['accounts'][self.account_number]['balance'] = self._balance
+                save_users(self.user_accounts)  
+
+            print(f"Deposited {amount} in the account {self.account_number} successfully. balance: {self._balance}")
         else:
             print("Enter valid amount(e.g., 5000, 10000)")
 
@@ -37,11 +41,17 @@ class Account(ABC):
             if amount <= self._balance:
                 self._balance -= amount
                 self.add_transaction(Transaction(self.account_number, amount, "Withdraw"))
-                print(f"Withdrawed {amount} from the account {self.account_number} successfully.")
+                
+                self.user_accounts = load_users()  # Ensure fresh data
+                if self.owner in self.user_accounts and self.account_number in self.user_accounts[self.owner]['accounts']:
+                    self.user_accounts[self.owner]['accounts'][self.account_number]['balance'] = self._balance
+                    save_users(self.user_accounts)
+
+                print(f"Withdrawn {amount} from account {self.account_number} successfully.")
             else:
                 print("Insufficient balance!")
         else:
-            print("Enter valid amount(e.g., 5000, 10000)")
+            print("Enter a valid amount (e.g., 5000, 10000)")
 
     def add_transaction(self, transaction):
         self.transactions = load_transactions()
@@ -50,7 +60,7 @@ class Account(ABC):
             "account_number": transaction.account_number,
             "amount": transaction.amount,
             "transaction_type": transaction.transaction_type,
-            "timestamp": transaction.timestamp
+            "timestamp": datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         }
         save_transactions(self.transactions)
         print(f"Transaction saved: {self.transactions}")
@@ -62,8 +72,8 @@ class Account(ABC):
         """
         Displaying the transaction history
         """
-        for transaction_id, transaction_record in self.transactions.items():
-            print(f"{transaction_record['timestamp']} - {transaction_record['transaction_id']}: {transaction_record['transaction_type']} of {transaction_record['amount']} on Account {transaction_record['account_number']}")
+        for transaction_id, _ in self.transactions.items():
+            print(f"{self.transactions[transaction_id]['timestamp']} - {self.transactions[transaction_id]['transaction_id']}: {self.transactions[transaction_id]['transaction_type']} of {self.transactions[transaction_id]['amount']} on Account {self.transactions[transaction_id]['account_number']}")
 
 # Subclass1
 class SavingAccount(Account):

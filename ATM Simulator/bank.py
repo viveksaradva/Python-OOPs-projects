@@ -1,6 +1,7 @@
 from utils import save_users, load_users, save_transactions, load_transactions
 from account import SavingAccount, CurrentAccount
 from transaction import Transaction
+from datetime import datetime
 
 class Bank:
     def __init__(self, name):
@@ -14,8 +15,7 @@ class Bank:
         """
         self.users[user_id] = {
             'name': name,
-            'accounts': [],
-            'balance': 0
+            'accounts': {}
         }
         save_users(self.users)
 
@@ -24,8 +24,11 @@ class Bank:
         Add an account in JSON file
         """
         if user_id in self.users:
-            self.users[user_id]['accounts'].append(account.account_number)
-            self.users[user_id]['balance'] = account._balance
+            self.users[user_id]['accounts'][account.account_number] = {
+                'balance': account._balance
+            }
+            
+            # self.users[user_id]['balance'] = account._balance
             save_users(self.users)
         else:
             print("Customer not found")
@@ -42,6 +45,6 @@ class Bank:
             "account_number": transaction.account_number,
             "amount": transaction.amount,
             "transaction_type": transaction.transaction_type,
-            "timestamp": transaction.timestamp
+            "timestamp": datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         }
         save_transactions(self.transactions)

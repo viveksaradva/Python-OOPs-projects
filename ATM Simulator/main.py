@@ -53,7 +53,7 @@ if __name__ == "__main__":
             if not session_user_id:
                 print("Please create a user in option 1")
             else:
-                amount = float(input("Enter deposit amount: "))
+                amount = int(input("Enter deposit amount: "))
 
                 print("Choose the account: ", end='\n')
                 for i, account in enumerate(accounts):
@@ -65,12 +65,13 @@ if __name__ == "__main__":
                 account.deposit(amount)
 
                 print(f"Deposited {amount} to account {account.account_number}.")
+                print(f"Balance: {account.get_balance()}")
 
         elif choice == '4':
             if not session_user_id:
                 print("Please create a user in option 1")
             else:
-                amount = float(input("Enter withdraw amount: "))
+                amount = int(input("Enter withdraw amount: "))
 
                 print("Choose the account: ", end='\n')
                 for i, account in enumerate(accounts):
