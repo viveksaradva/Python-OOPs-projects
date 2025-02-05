@@ -1,0 +1,16 @@
+{
+    "C001": {
+        "name": "Alice",
+        "accounts": [
+            "A001"
+        ],
+        "balance": 500.0
+    },
+    "C002": {
+        "name": "Bob",
+        "accounts": [
+            "A001"
+        ],
+        "balance": 700.0
+    }
+}

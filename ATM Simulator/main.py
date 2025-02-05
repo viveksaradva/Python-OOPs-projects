@@ -1,32 +1,102 @@
 from bank import Bank
-from customer import Customer
 from account import SavingAccount, CurrentAccount
+from utils import load_users
 
-bank = Bank("HRS bank")
+def display_menu():
+    print("\n1. Create a new user")
+    print("2. Create a new account")
+    print("3. Deposit money")
+    print("4. Withdraw money")
+    print("5. Check balance")
+    print("6. Exit")
 
-customer1 = Customer("C01", "Alice")
+if __name__ == "__main__":
 
-account1 =  CurrentAccount("A001", customer1, 200.0)
+    bank = Bank("MyBank")
+    session_user_id = None # For user logging
+    accounts = []
 
-account1.deposit(500)  
-account1.withdraw(300)  
-account1.withdraw(2000)  # Should show "Insufficient balance!"
+    while True:
+        print("\nWelcome to ATM Simulator")
+        display_menu()
+        choice = input("Enter the choice: ")
 
-# Show transaction history
-print("\nTransaction History:")
-for transaction in account1.get_transaction_history():
-    print(transaction)
+        if choice == '1':
+            if session_user_id:
+                print(f"\nAlready logged in as {session_user_id}")
+            else:
+                session_user_id= input("Enter user_id: ")
+                user_name = input("Enter user_name: ")
+                bank.add_user(session_user_id, user_name)
+                print(f"User {user_name} is created successfully!")
 
-# account1.deposit(500)
-# account1.withdraw(20)
-# print(account1.get_balance())
-# account1.withdraw(800)
-# print(account1.get_balance())
+        elif choice == '2':
+            if not session_user_id:
+                print("Please create a user in option 1")
+            else:
+                account_num = input("Enter the account number: ")
+                initial_balance = float(input("Enter initial deposit amount: "))
+                account_type = input("Enter the account type(savings or current): ")
+                if account_type.lower() == "savings":
+                    account = SavingAccount(account_num, session_user_id, initial_balance)
+                elif account_type.lower() == "current":
+                    account = CurrentAccount(account_num, session_user_id, initial_balance)
+                else: 
+                    print("Invalid account type.")
+                    continue
 
-# print("-------------SavingAccount-------------------------")
-# account2 = SavingAccount("A002", customer1, 5000)
+                bank.add_account(session_user_id, account)
+                accounts.append(account)
+                print(f"{account_type.capitalize()} account {account_num} created successfully.")
 
-# account2.withdraw(2000)
-# print(account2.get_balance())
-# print(f"The interest: {account2.calculate_interest()}")
+        elif choice == '3':
+            if not session_user_id:
+                print("Please create a user in option 1")
+            else:
+                amount = float(input("Enter deposit amount: "))
 
+                print("Choose the account: ", end='\n')
+                for i, account in enumerate(accounts):
+                    print(f"{i+1}. {account.account_number}")
+
+                account_sr_num = int(input("Enter the account sr number: "))
+                
+                account = accounts[account_sr_num - 1]
+                account.deposit(amount)
+
+                print(f"Deposited {amount} to account {account.account_number}.")
+
+        elif choice == '4':
+            if not session_user_id:
+                print("Please create a user in option 1")
+            else:
+                amount = float(input("Enter withdraw amount: "))
+
+                print("Choose the account: ", end='\n')
+                for i, account in enumerate(accounts):
+                    print(f"{i+1}. {account.account_number}")
+
+                account_sr_num = int(input("Enter the account sr number: "))
+                
+                account = accounts[account_sr_num - 1]
+                account.withdraw(amount)
+
+                print(f"Withdraw {amount} from account {account.account_number}.")
+
+        elif choice == '5':
+            if not session_user_id:
+                print("Please create a user in option 1")
+            else:
+                print("Choose the account: ", end='\n')
+                for i, account in enumerate(accounts):
+                    print(f"{i+1}. {account.account_number}")
+
+                account_sr_num = int(input("Enter the account sr number: "))
+                
+                account = accounts[account_sr_num - 1]
+                print(f"Balance: {account.get_balance()}")
+
+        elif choice == '6':
+            print(f"Logging out user {session_user_id}. Goodbye!")
+            session_user_id = None  # Reset session
+            break                                

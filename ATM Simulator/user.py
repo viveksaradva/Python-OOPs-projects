@@ -1,6 +1,6 @@
-class Customer:
-    def __init__(self, customer_id, name):
-        self._customer_id = customer_id
+class User:
+    def __init__(self, user_id, name):
+        self._user_id = user_id
         self.name = name
         self.accounts = []
 
@@ -9,7 +9,7 @@ class Customer:
 
     def add_account(self, account):
         """
-        Link an account to the customer
+        Link an account to the user 
         """
         self.accounts.append(account)
 

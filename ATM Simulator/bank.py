@@ -1,16 +1,47 @@
+from utils import save_users, load_users, save_transactions, load_transactions
+from account import SavingAccount, CurrentAccount
+from transaction import Transaction
+
 class Bank:
     def __init__(self, name):
         self.name = name
-        self.accounts = {}
+        self.users = load_users()
+        self.transactions = load_transactions()
 
-    def add_account(self, account):
+    def add_user(self, user_id, name):
         """
-        Add a new bank account in accounts dict
+        Add a user in JSON file
         """
-        self.accounts[account.account_number] = account
+        self.users[user_id] = {
+            'name': name,
+            'accounts': [],
+            'balance': 0
+        }
+        save_users(self.users)
 
-    def get_account(self, account_number):
+    def add_account(self, user_id, account):
         """
-        Fetching the account details from account dict using account_number
+        Add an account in JSON file
         """
-        return self.accounts.get(account_number, None)
+        if user_id in self.users:
+            self.users[user_id]['accounts'].append(account.account_number)
+            self.users[user_id]['balance'] = account._balance
+            save_users(self.users)
+        else:
+            print("Customer not found")
+
+    def get_user(self, user_id):
+        """
+        Fetching the user from the user JSON file
+        """
+        return self.users.get(user_id, None)
+
+    def add_transaction(self, transaction):
+        transaction_id = f"T{len(self.transactions) + 1}"
+        self.transactions[transaction_id] = {
+            "account_number": transaction.account_number,
+            "amount": transaction.amount,
+            "transaction_type": transaction.transaction_type,
+            "timestamp": transaction.timestamp
+        }
+        save_transactions(self.transactions)

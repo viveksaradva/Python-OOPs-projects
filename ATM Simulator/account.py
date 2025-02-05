@@ -1,4 +1,5 @@
 import re
+from utils import save_users, load_users, save_transactions, load_transactions
 from abc import ABC, abstractmethod
 from transaction import Transaction
 
@@ -8,7 +9,8 @@ class Account(ABC):
         self.account_number = account_number
         self.owner = owner
         self._balance = balance # Private attr for encapsulation
-        self.transactions = []
+        self.transactions = load_transactions()
+        self.user_accounts = load_users()
 
     def __str__(self):
         return f"Account number: {self.account_number} | Owner: {self.owner}"
@@ -23,7 +25,9 @@ class Account(ABC):
     def deposit(self, amount):
         if re.match(r"^\d+$", str(amount)):
             self._balance += amount
-            self.transactions.append(Transaction(self.account_number, amount, "Deposit"))
+            self.add_transaction(Transaction(self.account_number, amount, "Deposit"))
+            self.user_accounts[self.owner]['balance'] = self._balance
+            save_users(self.bank.users)
             print(f"Deposited {amount} in the account {self.account_number} successfully.")
         else:
             print("Enter valid amount(e.g., 5000, 10000)")
@@ -32,12 +36,24 @@ class Account(ABC):
         if re.match(r"^\d+$", str(amount)):
             if amount <= self._balance:
                 self._balance -= amount
-                self.transactions.append(Transaction(self.account_number, amount, "Withdraw"))
+                self.add_transaction(Transaction(self.account_number, amount, "Withdraw"))
                 print(f"Withdrawed {amount} from the account {self.account_number} successfully.")
             else:
                 print("Insufficient balance!")
         else:
             print("Enter valid amount(e.g., 5000, 10000)")
+
+    def add_transaction(self, transaction):
+        self.transactions = load_transactions()
+        transaction_id = f"T{len(self.transactions) + 1}"
+        self.transactions[transaction_id] = {
+            "account_number": transaction.account_number,
+            "amount": transaction.amount,
+            "transaction_type": transaction.transaction_type,
+            "timestamp": transaction.timestamp
+        }
+        save_transactions(self.transactions)
+        print(f"Transaction saved: {self.transactions}")
 
     def get_balance(self):
         return self._balance
@@ -46,7 +62,8 @@ class Account(ABC):
         """
         Displaying the transaction history
         """
-        return [str(t) for t in self.transactions]
+        for transaction_id, transaction_record in self.transactions.items():
+            print(f"{transaction_record['timestamp']} - {transaction_record['transaction_id']}: {transaction_record['transaction_type']} of {transaction_record['amount']} on Account {transaction_record['account_number']}")
 
 # Subclass1
 class SavingAccount(Account):
