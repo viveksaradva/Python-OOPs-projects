@@ -1,6 +1,4 @@
 from utils import save_users, load_users, save_transactions, load_transactions
-from account import SavingAccount, CurrentAccount
-from transaction import Transaction
 from datetime import datetime
 
 class Bank:
@@ -48,3 +46,10 @@ class Bank:
             "timestamp": datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         }
         save_transactions(self.transactions)
+
+# UserRepository for managing the "S - Single Responsibility Principle (SRP)"
+class UserRepository:
+    """
+    Maintains the saving and loading of users
+    """
+
